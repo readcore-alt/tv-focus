@@ -1,0 +1,35 @@
+name: Build TV Focus APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Java 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Instalar Gradle 8.5
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.5'
+        cache-disabled: true
+
+    - name: Compilar APK Debug
+      run: gradle assembleDebug --stacktrace --no-daemon
+
+    - name: Subir APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: tv-focus-apk
+        path: "**/build/outputs/apk/**/*.apk"
